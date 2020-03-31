@@ -24,7 +24,7 @@ $ cd ~/env1/BleTag
 $ ./setup.sh
 ```
 
-#### memo
+#### (memo)
 in setup.sh
 ``` bash
 sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))

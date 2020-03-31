@@ -2,13 +2,18 @@
 #
 # (c) 2020 Yoichi Tanibayashi
 #
+
+BINFILES="center/TagPublisher.py center/BlePeripheral.py center/MyLogger.py"
+
 usage () {
-    echo "usage: ${MYNAME}"
+    echo
+    echo "  usage: ${MYNAME}"
+    echo
 }
 
 echo_date () {
     DATESTR=`date +'%Y/%m/%d(%a) %H:%M:%S'`
-    echo "${DATESTR}> $*"
+    echo "* ${DATESTR}> $*"
 }
 
 echo_do () {
@@ -19,14 +24,17 @@ echo_do () {
 MYNAME=`basename $0`
 echo_date "MYNAME=${MYNAME}"
 
-BINFILES="center/TagPublisher.py center/BlePeripheral.py center/MyLogger.py"
-
 MYDIR=`dirname $0`
 echo_date "MYDIR=${MYDIR}"
 
 cd $MYDIR
 BASEDIR=`pwd`
 echo_date "BASEDIR=$BASEDIR"
+
+if [ ! -z $1 ]; then
+    usage
+    exit 1
+fi
 
 VENVDIR=`dirname $BASEDIR`
 echo_date "VENVDIR=$VENVDIR"
@@ -35,7 +43,7 @@ BINDIR="${VENVDIR}/bin"
 echo_date "BINDIR=$BINDIR"
 
 #
-# check venv
+# check venv and activate it
 #
 if [ -z ${VIRTUAL_ENV} ]; then
     ACTIVATE="../bin/activate"
@@ -51,13 +59,42 @@ if [ ${VIRTUAL_ENV} != ${VENVDIR} ]; then
 fi
 
 #
-# setcap
+# download other repositoris
 #
-echo_date "* setcap"
-echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
+echo_do cd ${VENVDIR}
+for g in BleBeacon NFC Templates; do
+    if [ ! -d $g ]; then
+        echo_do git clone git@github.com:ytani01/${g}.git
+    fi
+done
 
 #
-# copy files
+# update pip
 #
-echo_date "* copy files"
-echo_do cp -vf ${BINFILES} ${BINDIR}
+echo_do python3 -m pip install -U pip
+hash -r
+pip -V
+
+#
+# install Python packages
+#
+echo_do cd ${BASEDIR}
+echo_do pip install -r requirements.txt
+
+#
+# setcap
+#
+echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
+echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' ${VENVDIR}/lib/python3.7/site-packages/bluepy/bluepy-helper
+
+#
+# make symbolick links
+#
+for f in ${BINFILES}; do
+    echo_do ln -sf ${BASEDIR}/${f} ${BINDIR}
+done
+
+echo_do ln -sf ${VENVDIR}/lib/python3.*/site-packages/bluepy/bluepy-helper ${BINDIR}
+
+
+echo_date "done."

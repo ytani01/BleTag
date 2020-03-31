@@ -7,10 +7,16 @@ MyLogger.py
 
 Usage:
 --
-from MyLogger import get_logger
+from MyLogger import get_logger, DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 class A:
     def __init__(self, a, debug=False)
+        self.debug = debug
+        self.logger = get_logger(__class__.__name__, self.debug)
+        self.logger.debug('a=%s', a)
+
+class B:
+    def __init__(self, a, debug=INFO)
         self.debug = debug
         self.logger = get_logger(__class__.__name__, self.debug)
         self.logger.debug('a=%s', a)
@@ -20,7 +26,8 @@ class A:
 __author__ = 'Yoichi Tanibayashi'
 __date__   = '2020/03/31'
 
-from logging import getLogger, StreamHandler, Formatter, DEBUG, INFO, WARN
+from logging import getLogger, StreamHandler, Formatter
+from logging import NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 
 class MyLogger:
@@ -41,7 +48,9 @@ class MyLogger:
 
     def get_logger(self, name, debug):
         logger = self.logger.getChild(name)
-        if debug:
+        if debug in (NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL):
+            logger.setLevel(debug)
+        elif debug:
             logger.setLevel(DEBUG)
         else:
             logger.setLevel(INFO)

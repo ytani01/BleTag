@@ -9,7 +9,7 @@ __author__ = 'Yoichi Tanibayashi'
 __date__   = '2020/03'
 
 from BlePeripheral import BlePeripheral, BlePeripheralApp
-from MyLogger import get_logger
+from MyLogger import get_logger, DEBUG, INFO, WARNING, ERROR, CRITICAL
 import click
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
