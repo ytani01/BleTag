@@ -39,7 +39,7 @@ class TagPublisher(BlePeripheral):
         # super().__init__(self._myname, [self._svc1], self._ms_data,
         super().__init__(self._myname, [], self._ms_data, debug=self._dbg)
 
-
+"""
 class TagService(BleService):
     UUID = 'ec00'
 
@@ -64,7 +64,7 @@ class TagCharacteristic(BleCharacteristic):
         self._log.debug('uuid=%s', uuid)
 
         super().__init__(uuid, ['read', 'write', 'notify'], debug=self._dbg)
-
+"""
 
 class TagPublisherApp(BlePeripheralApp):
     _log = get_logger(__name__, False)
