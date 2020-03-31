@@ -1,6 +1,13 @@
-# BLE Tag
+# NFC to BLE Tag
 
 ## About
+
+
+## BOM
+
+* Raspberry Pi 3B+
+* ESP32 devkit
+* Sony PaSoRi RC-S380
 
 
 ## Install
