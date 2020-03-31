@@ -4,7 +4,7 @@
 #
 
 BINFILES="center/activate-do.sh center/MyLogger.py"
-BINFILES="${BINFILES} center/TagPublisher.py center/BlePeripheral.py"
+BINFILES="${BINFILES} center/BleTagPublisher.py center/BlePeripheral.py"
 BINFILES="${BINFILES} center/get-tagid.py"
 
 #
