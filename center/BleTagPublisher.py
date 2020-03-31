@@ -62,6 +62,7 @@ class BleTagPublisherApp(BlePeripheralApp):
         while self._active or count < count_max:
             time.sleep(1)
             count += 1
+            print('count=%d' % (count))
 
         return
 
