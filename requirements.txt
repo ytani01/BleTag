@@ -1,3 +1,4 @@
 click
 pybleno
 bluepy
+pyserial

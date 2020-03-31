@@ -3,8 +3,13 @@
 # (c) 2020 Yoichi Tanibayashi
 #
 
-BINFILES="center/TagPublisher.py center/BlePeripheral.py center/MyLogger.py"
+BINFILES="center/activate-do.sh center/MyLogger.py"
+BINFILES="${BINFILES} center/TagPublisher.py center/BlePeripheral.py"
+BINFILES="${BINFILES} center/get-tagid.py"
 
+#
+# functions
+#
 usage () {
     echo
     echo "  usage: ${MYNAME}"
@@ -21,6 +26,9 @@ echo_do () {
     eval $*
 }
 
+#
+# main
+#
 MYNAME=`basename $0`
 echo_date "MYNAME=${MYNAME}"
 
