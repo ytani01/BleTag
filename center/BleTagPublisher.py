@@ -10,11 +10,12 @@ __date__   = '2020/03'
 
 from BlePeripheral import BlePeripheral, BlePeripheralApp
 from MyLogger import get_logger, DEBUG, INFO, WARNING, ERROR, CRITICAL
+import time
 import click
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-class TagPublisher(BlePeripheral):
+class BleTagPublisher(BlePeripheral):
     MYNAME = 'Yt'
     TAGID_PREFIX = 'T'
 
@@ -33,8 +34,14 @@ class TagPublisher(BlePeripheral):
 
         super().__init__(self._myname, [], self._ms_data, debug=self._dbg)
 
+    def start(self):
+        super().start()
 
-class TagPublisherApp(BlePeripheralApp):
+    def end(self):
+        super().end()
+
+
+class BleTagPublisherApp(BlePeripheralApp):
     _log = get_logger(__name__, False)
 
     def __init__(self, tagid, debug=False):
@@ -42,13 +49,22 @@ class TagPublisherApp(BlePeripheralApp):
         __class__._log = get_logger(__class__.__name__, self._dbg)
         self._log.debug('tagid=%s', tagid)
 
-        self._ble = TagPublisher(tagid, debug=self._dbg)
+        self._ble = BleTagPublisher(tagid, debug=self._dbg)
 
     def main(self):
-        return super().main()
+        self._log.debug('')
+
+        self._ble.start()
+
+        self._active = True
+        while self._active:
+            time.sleep(1)
+
+        return
 
     def end(self):
-        return super().end()
+        self._active = False
+        self._ble.end()
 
 
 @click.command(context_settings=CONTEXT_SETTINGS, help='')
@@ -59,7 +75,7 @@ def main(tagid, debug):
     _log = get_logger(__name__, debug)
     _log.info('tagid=%s', tagid)
 
-    app = TagPublisherApp(tagid, debug=debug)
+    app = BleTagPublisherApp(tagid, debug=debug)
     try:
         app.main()
     finally:

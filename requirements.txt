@@ -2,3 +2,4 @@ click
 pybleno
 bluepy
 pyserial
+nfcpy
