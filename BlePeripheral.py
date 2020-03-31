@@ -1,1 +1,0 @@
-../BleBeacon/pybleno/BlePeripheral.py
