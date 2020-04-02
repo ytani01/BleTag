@@ -25,9 +25,11 @@ $ cd ~/env1
 $ git clone https://www.github.com/ytani01/BleTag.git
 ```
 
-### setup
+### install Center
+
+#### setup
 ```bash
-$ cd ~/env1/BleTag
+$ cd ~/env1/Nfc2BleTag/center
 $ ./setup.sh
 ```
 
@@ -37,6 +39,14 @@ in setup.sh
 sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
 ```
 
+### install Tag
+
+#### Arduino IDE
+
+sketch file
+```
+~/env1/Nfc2BleTag/tag/ble_observer/ble_observer.ino
+```
 
 ## References
 

@@ -3,10 +3,10 @@
 # (c) 2020 Yoichi Tanibayashi
 #
 
-BINFILES="center/activate-do.sh center/MyLogger.py"
-BINFILES="${BINFILES} center/Nfc2BleTag.py"
-BINFILES="${BINFILES} center/BleTagPublisher.py center/BlePeripheral.py"
-BINFILES="${BINFILES} center/get-tagid.py"
+BINFILES="activate-do.sh MyLogger.py"
+BINFILES="${BINFILES} Nfc2BleTag.py"
+BINFILES="${BINFILES} BleTagPublisher.py BlePeripheral.py"
+BINFILES="${BINFILES} get-tagid.py"
 
 #
 # functions
@@ -24,7 +24,11 @@ echo_date () {
 
 echo_do () {
     echo_date $*
-    eval $*
+    $*
+    if [ $? -ne 0 ]; then
+        echo_date "ERROR: ${MYNAME}: failed"
+        exit 1
+    fi
 }
 
 #
@@ -45,7 +49,7 @@ if [ ! -z $1 ]; then
     exit 1
 fi
 
-VENVDIR=`dirname $BASEDIR`
+VENVDIR=$(dirname $(dirname $BASEDIR))
 echo_date "VENVDIR=$VENVDIR"
 
 BINDIR="${VENVDIR}/bin"
@@ -55,17 +59,20 @@ echo_date "BINDIR=$BINDIR"
 # check venv and activate it
 #
 if [ -z ${VIRTUAL_ENV} ]; then
-    ACTIVATE="../bin/activate"
+    ACTIVATE="${BINDIR}/activate"
+    echo_date "ACTIVATE=${ACTIVATE}"
+
     if [ ! -f ${ACTIVATE} ]; then
         echo_date "${ACTIVATE}: no such file"
         exit 1
     fi
-    . ../bin/activate
+    . ${ACTIVATE}
 fi
 if [ ${VIRTUAL_ENV} != ${VENVDIR} ]; then
     echo_date "VIRTUAL_ENV=${VIRTUAL_ENV} != ${VENVDIR}"
     exit 1
 fi
+echo_date "VIRTUAL_ENV=${VIRTUAL_ENV}"
 
 #
 # download other repositoris
@@ -94,7 +101,7 @@ echo_do pip install -r requirements.txt
 # setcap
 #
 echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
-echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' ${VENVDIR}/lib/python3.7/site-packages/bluepy/bluepy-helper
+echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' ${VENVDIR}/lib/python3.?/site-packages/bluepy/bluepy-helper
 
 #
 # make symbolick links
@@ -104,6 +111,5 @@ for f in ${BINFILES}; do
 done
 
 echo_do ln -sf ${VENVDIR}/lib/python3.*/site-packages/bluepy/bluepy-helper ${BINDIR}
-
 
 echo_date "done."
