@@ -5,9 +5,9 @@
 
 ## BOM
 
-* Raspberry Pi 3B+
-* ESP32 devkit
-* Sony PaSoRi RC-S380
+* Center: Raspberry Pi 3B+
+* NFC Reader: Sony PaSoRi RC-S380
+* Tag: ESP32 devkit
 
 
 ## Install
