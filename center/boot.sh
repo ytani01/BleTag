@@ -3,10 +3,8 @@
 # (c) 2020 Yoichi Tanibayashi
 #
 
-BINFILES="activate-do.sh MyLogger.py"
-BINFILES="${BINFILES} boot.sh Nfc2BleTag.py"
-BINFILES="${BINFILES} BleTagPublisher.py BlePeripheral.py"
-BINFILES="${BINFILES} get-tagid.py"
+CMD="Nfc2BleTag.py"
+LOGFILE="${HOME}/tmp/${CMD}.log"
 
 #
 # functions
@@ -34,6 +32,8 @@ echo_do () {
 #
 # main
 #
+echo_date "CMD=${CMD}"
+
 MYNAME=`basename $0`
 echo_date "MYNAME=${MYNAME}"
 
@@ -49,7 +49,7 @@ if [ ! -z $1 ]; then
     exit 1
 fi
 
-VENVDIR=$(dirname $(dirname $BASEDIR))
+VENVDIR=$(dirname $BASEDIR)
 echo_date "VENVDIR=$VENVDIR"
 
 BINDIR="${VENVDIR}/bin"
@@ -75,41 +75,20 @@ fi
 echo_date "VIRTUAL_ENV=${VIRTUAL_ENV}"
 
 #
-# download other repositoris
+# check running
 #
-echo_do cd ${VENVDIR}
-for g in BleBeacon NFC Templates; do
-    if [ ! -d $g ]; then
-        echo_do git clone git@github.com:ytani01/${g}.git
-    fi
-done
+PID=`ps axw | grep -v grep | grep python3 | grep ${CMD} | sed 's/^ *//' | cut -d ' ' -f 1`
+echo_date "PID=${PID}"
 
 #
-# update pip
+# restart $CMD
 #
-echo_do python3 -m pip install -U pip
-hash -r
-pip -V
+if [ ! -z ${PID} ]; then
+    echo_do kill ${PID}
+    echo_do sleep 2
+fi
 
-#
-# install Python packages
-#
-echo_do cd ${BASEDIR}
-echo_do pip install -r requirements.txt
-
-#
-# setcap
-#
-echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
-echo_do sudo setcap 'cap_net_raw,cap_net_admin+eip' ${VENVDIR}/lib/python3.?/site-packages/bluepy/bluepy-helper
-
-#
-# make symbolick links
-#
-for f in ${BINFILES}; do
-    echo_do ln -sf ${BASEDIR}/${f} ${BINDIR}
-done
-
-echo_do ln -sf ${VENVDIR}/lib/python3.*/site-packages/bluepy/bluepy-helper ${BINDIR}
+echo_date ${CMD}
+${CMD} >> ${LOGFILE} 2>&1 &
 
 echo_date "done."

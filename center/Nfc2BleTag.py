@@ -69,7 +69,7 @@ class Nfc2BleTag:
             return 0
 
         count = 0
-        with open(idfile) as f:
+        with open(idpath) as f:
             csv_reader = csv.reader(f)
             for row in csv_reader:
                 self._log.debug('row=%s', row)
@@ -99,13 +99,14 @@ class Nfc2BleTag:
         return None
 
     def cb_connect(self, nfcid):
-        self._log.debug('nfcid=%s', nfcid)
+        self._log.info('nfcid=%s', nfcid)
 
         if self._pub_active:
             self._pub_active = False
             time.sleep(2)
 
         tagid = self.nfcid2tagid(nfcid)
+        self._log.info('tagid=%s', tagid)
         if tagid is None:
             self._log.error('nfcid:%s .. not found', nfcid)
             return True
@@ -125,6 +126,7 @@ class Nfc2BleTag:
 
         self._blepub = BleTagPublisher(tagid, debug=False)
         self._blepub.start()
+        self._log.info('start')
 
         self._pub_active = True
         n = int(self.PUBLISH_SEC / self.PUBLISH_INTERVAL)
@@ -138,7 +140,7 @@ class Nfc2BleTag:
             time.sleep(self.PUBLISH_INTERVAL)
 
         self._blepub.end()
-        self._log.debug('done')
+        self._log.info('done')
 
     def nfcid2tagid(self, nfcid):
         self._log.debug('nfcid=%s', nfcid)
@@ -157,12 +159,10 @@ class Nfc2BleTag:
 class Nfc2BleTagApp:
     _log = get_logger(__name__, False)
 
-    def __init__(self, config, debug=False):
+    def __init__(self, debug=False):
         self._dbg = debug
         __class__._log = get_logger(__class__.__name__, self._dbg)
-        self._log.debug('config=%s')
-
-        self._config = config
+        self._log.debug('')
 
         self._obj = Nfc2BleTag(debug=self._dbg)
 
@@ -180,15 +180,12 @@ class Nfc2BleTagApp:
 @click.command(context_settings=CONTEXT_SETTINGS, help='''
 NFC to BLE Tag
 ''')
-@click.option('--idfile', '-i', 'idfile', type=str, default='',
-              help='ID file')
 @click.option('--debug', '-d', 'debug', is_flag=True, default=False,
               help='debug flag')
-def main(idfile, debug):
+def main(debug):
     _log = get_logger(__name__, debug)
-    _log.debug('idfile=%s', idfile)
 
-    app = Nfc2BleTagApp(idfile, debug=debug)
+    app = Nfc2BleTagApp(debug=debug)
     try:
         app.main()
     finally:
