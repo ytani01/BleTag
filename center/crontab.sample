@@ -22,11 +22,12 @@
 # 
 # m h  dom mon dow   command
 LOGDIR=/home/pi/tmp
+
+VENV1=/home/pi/env0-tag
 CMD1=Nfc2BleTag
-BOOT1=/home/pi/env0-tag/bin/boot-Nfc2BleTag.sh
 
 @reboot		mv -f ${LOGDIR}/${CMD1}.log ${LOGDIR}/${CMD1}.log.1
 @reboot		mv -f ${LOGDIR}/boot-${CMD1}.log ${LOGDIR}/boot-${CMD1}.log.1
-@reboot		sleep 3; ${BOOT1} > ${LOGDIR}/boot-${CMD1}.log 2>&1 &
+@reboot		sleep 3; ${VENV1}/bin/boot-${CMD1} > ${LOGDIR}/boot-${CMD1}.log 2>&1 &
 
-*/30 * * * *	${BOOT1} >> ${LOGDIR}/boot-${CMD1}.log 2>&1 &
+*/30 * * * *	${VENV1}/bin/boot-${CMD1} >> ${LOGDIR}/boot-${CMD1}.log 2>&1 &
