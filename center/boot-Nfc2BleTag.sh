@@ -15,16 +15,16 @@ usage () {
     echo
 }
 
-echo_date () {
+ts_echo () {
     DATESTR=`date +'%Y/%m/%d(%a) %H:%M:%S'`
     echo "* ${DATESTR}> $*"
 }
 
-echo_do () {
-    echo_date $*
+ts_echo_do () {
+    ts_echo $*
     $*
     if [ $? -ne 0 ]; then
-        echo_date "ERROR: ${MYNAME}: failed"
+        ts_echo "ERROR: ${MYNAME}: failed"
         exit 1
     fi
 }
@@ -32,63 +32,63 @@ echo_do () {
 #
 # main
 #
-echo_date "CMD=${CMD}"
+ts_echo "CMD=${CMD}"
 
 MYNAME=`basename $0`
-echo_date "MYNAME=${MYNAME}"
+ts_echo "MYNAME=${MYNAME}"
 
 MYDIR=`dirname $0`
-echo_date "MYDIR=${MYDIR}"
+ts_echo "MYDIR=${MYDIR}"
 
 cd $MYDIR
 BASEDIR=`pwd`
-echo_date "BASEDIR=$BASEDIR"
+ts_echo "BASEDIR=$BASEDIR"
 
 if [ ! -z $1 ]; then
     usage
     exit 1
 fi
 
-VENVDIR=$(dirname $BASEDIR)
-echo_date "VENVDIR=$VENVDIR"
+VENVDIR=$(dirname $(dirname $BASEDIR))
+ts_echo "VENVDIR=$VENVDIR"
 
 BINDIR="${VENVDIR}/bin"
-echo_date "BINDIR=$BINDIR"
+ts_echo "BINDIR=$BINDIR"
 
 #
 # check venv and activate it
 #
 if [ -z ${VIRTUAL_ENV} ]; then
     ACTIVATE="${BINDIR}/activate"
-    echo_date "ACTIVATE=${ACTIVATE}"
+    ts_echo "ACTIVATE=${ACTIVATE}"
 
     if [ ! -f ${ACTIVATE} ]; then
-        echo_date "${ACTIVATE}: no such file"
+        ts_echo "${ACTIVATE}: no such file"
         exit 1
     fi
     . ${ACTIVATE}
 fi
 if [ ${VIRTUAL_ENV} != ${VENVDIR} ]; then
-    echo_date "VIRTUAL_ENV=${VIRTUAL_ENV} != ${VENVDIR}"
+    ts_echo "VIRTUAL_ENV=${VIRTUAL_ENV} != ${VENVDIR}"
     exit 1
 fi
-echo_date "VIRTUAL_ENV=${VIRTUAL_ENV}"
+ts_echo "VIRTUAL_ENV=${VIRTUAL_ENV}"
 
 #
 # check running
 #
 PID=`ps axw | grep -v grep | grep python3 | grep ${CMD} | sed 's/^ *//' | cut -d ' ' -f 1`
-echo_date "PID=${PID}"
+ts_echo "PID=${PID}"
 
 #
 # restart $CMD
 #
 if [ ! -z ${PID} ]; then
-    echo_do kill ${PID}
-    echo_do sleep 2
+    ts_echo_do kill ${PID}
+    ts_echo_do sleep 2
 fi
 
-echo_date ${CMD}
+ts_echo ${CMD}
 ${CMD} >> ${LOGFILE} 2>&1 &
 
-echo_date "done."
+ts_echo "done."

@@ -22,7 +22,7 @@ $ python3 -m venv env1
 ### download
 ```bash
 $ cd ~/env1
-$ git clone https://www.github.com/ytani01/BleTag.git
+$ git clone https://www.github.com/ytani01/Nfc2BleTag.git
 ```
 
 ### install Center

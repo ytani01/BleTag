@@ -21,11 +21,12 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 # 
 # m h  dom mon dow   command
-BOOT_SH=/home/pi/env0-tag/bin/boot.sh
 LOGDIR=/home/pi/tmp
+CMD1=Nfc2BleTag
+BOOT1=/home/pi/env0-tag/bin/boot-Nfc2BleTag.sh
 
-@reboot		mv -f ${LOGDIR}/Nfc2BleTag.log ${LOGDIR}/Nfc2BleTag.log.1
-@reboot		mv -f ${LOGDIR}/boot.log ${LOGDIR}/boot.log.1
-@reboot		sleep 3; ${BOOT_SH} > ${LOGDIR}/boot.log 2>&1 &
+@reboot		mv -f ${LOGDIR}/${CMD1}.log ${LOGDIR}/${CMD1}.log.1
+@reboot		mv -f ${LOGDIR}/boot-${CMD1}.log ${LOGDIR}/boot-${CMD1}.log.1
+@reboot		sleep 3; ${BOOT1} > ${LOGDIR}/boot-${CMD1}.log 2>&1 &
 
-*/30 * * * *	${BOOT_SH} >> ${LOGDIR}/boot.log 2>&1 &
+*/30 * * * *	${BOOT1} >> ${LOGDIR}/boot-${CMD1}.log 2>&1 &

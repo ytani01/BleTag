@@ -43,7 +43,7 @@ if [ -z "${VIRTUAL_ENV}" ]; then
         usage
         exit 1
     fi
-    . ${VENV_DIR}/bin/activate
+    . ${ACTIVATE_FILE}
 fi
 
 echo "VIRTUAL_ENV=$VIRTUAL_ENV"
