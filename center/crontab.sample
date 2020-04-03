@@ -26,8 +26,8 @@ LOGDIR=/home/pi/tmp
 VENV1=/home/pi/env0-tag
 CMD1=Nfc2BleTag
 
-@reboot		mv -f ${LOGDIR}/${CMD1}.log ${LOGDIR}/${CMD1}.log.1
-@reboot		mv -f ${LOGDIR}/boot-${CMD1}.log ${LOGDIR}/boot-${CMD1}.log.1
-@reboot		sleep 3; ${VENV1}/bin/boot-${CMD1} > ${LOGDIR}/boot-${CMD1}.log 2>&1 &
+@reboot		mv -f ${LOGDIR}/${CMD1}.py.log ${LOGDIR}/${CMD1}.py.log.1
+@reboot		mv -f ${LOGDIR}/boot-${CMD1}.sh.log ${LOGDIR}/boot-${CMD1}.sh.log.1
+@reboot		sleep 3; ${VENV1}/bin/boot-${CMD1}.sh > ${LOGDIR}/boot-${CMD1}.sh.log 2>&1 &
 
-*/30 * * * *	${VENV1}/bin/boot-${CMD1} >> ${LOGDIR}/boot-${CMD1}.log 2>&1 &
+*/30 * * * *	${VENV1}/bin/boot-${CMD1}.sh >> ${LOGDIR}/boot-${CMD1}.sh.log 2>&1 &
