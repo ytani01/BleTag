@@ -126,7 +126,7 @@ class Nfc2BleTag:
 
         self._blepub = BleTagPublisher(tagid, debug=False)
         self._blepub.start()
-        self._log.info('start')
+        self._log.info('start:tagid=%s', tagid)
 
         self._pub_active = True
         n = int(self.PUBLISH_SEC / self.PUBLISH_INTERVAL)
@@ -140,7 +140,7 @@ class Nfc2BleTag:
             time.sleep(self.PUBLISH_INTERVAL)
 
         self._blepub.end()
-        self._log.info('done')
+        self._log.info('done:tagid=%s', tagid)
 
     def nfcid2tagid(self, nfcid):
         self._log.debug('nfcid=%s', nfcid)

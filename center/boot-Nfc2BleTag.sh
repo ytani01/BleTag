@@ -83,10 +83,12 @@ ts_echo "PID=${PID}"
 #
 # restart $CMD
 #
-if [ ! -z ${PID} ]; then
-    ts_echo_do kill ${PID}
-    ts_echo_do sleep 2
-fi
+for p in ${PID}; do
+    if [ ! -z $p ]; then
+        ts_echo_do kill $p
+    fi
+done
+ts_echo_do sleep 2
 
 ts_echo ${CMD}
 ${CMD} >> ${LOGFILE} 2>&1 &
