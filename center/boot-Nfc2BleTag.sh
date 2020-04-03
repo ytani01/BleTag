@@ -49,7 +49,7 @@ if [ ! -z $1 ]; then
     exit 1
 fi
 
-VENVDIR=$(dirname $(dirname $BASEDIR))
+VENVDIR=$(dirname $BASEDIR)
 ts_echo "VENVDIR=$VENVDIR"
 
 BINDIR="${VENVDIR}/bin"
