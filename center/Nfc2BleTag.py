@@ -23,8 +23,8 @@ class Nfc2BleTag:
     ID_FILE = 'id.csv'
     ID_PATH = ['.', os.environ['HOME'], '/etc']
 
-    PUBLISH_SEC = 30
-    PUBLISH_INTERVAL = 0.5
+    PUBLISH_SEC = 60
+    PUBLISH_INTERVAL = 1
 
     _log = get_logger(__name__, False)
 
@@ -86,7 +86,11 @@ class Nfc2BleTag:
                 misc = row[2:]
                 self._log.debug('%d: nfc_id=%s, tag_id=%s, misc=%s',
                                 count, nfc_id, tag_id, misc)
-                self._tag_id[nfc_id] = tag_id
+                if nfc_id in self._tag_id.keys():
+                    self._tag_id[nfc_id].append(tag_id)
+                else:
+                    self._tag_id[nfc_id] = [tag_id]
+                self._log.debug('_tag_id=%s', self._tag_id)
 
         return count
 
@@ -111,6 +115,7 @@ class Nfc2BleTag:
 
         tagid = self.nfcid2tagid(nfcid)
         self._log.info('tagid=%s', tagid)
+
         if tagid is None:
             self._log.error('nfcid:%s .. not found', nfcid)
             return True
@@ -118,6 +123,7 @@ class Nfc2BleTag:
         pub_th = threading.Thread(target=self.publish, args=(tagid,),
                                   daemon=True)
         pub_th.start()
+        self._log.debug('start:%s..', pub_th)
 
         return True
 
@@ -130,7 +136,6 @@ class Nfc2BleTag:
 
         self._blepub = BleTagPublisher(tagid, debug=False)
         self._blepub.start()
-        self._log.info('start:tagid=%s', tagid)
 
         self._pub_active = True
         n = int(sec / self.PUBLISH_INTERVAL)
@@ -144,14 +149,18 @@ class Nfc2BleTag:
             time.sleep(self.PUBLISH_INTERVAL)
 
         self._blepub.end()
+
         self._log.info('done:tagid=%s', tagid)
 
     def nfcid2tagid(self, nfcid):
         self._log.debug('nfcid=%s', nfcid)
 
         try:
-            tagid = self._tag_id[nfcid]
+            tagid = self._tag_id[nfcid].pop(0)
             self._log.debug('tagid=%s', tagid)
+
+            self._tag_id[nfcid].append(tagid)
+            self._log.debug('_tagid[%s]=%s', nfcid, self._tag_id[nfcid])
 
         except KeyError as e:
             self._log.debug('%s:%s', type(e).__name__, e)
