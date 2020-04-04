@@ -46,9 +46,8 @@ class Nfc2BleTag:
         self._log.debug('n=%d', n)
 
         # 起動前にpublish中の可能性があるので、
-        # intervalを``0``にして、一度publishすることにより、
-        # publishを強制的にOFFにする。
-        self.publish('dammy', 0)
+        # publishを強制的にON/OFFする。
+        self.publish('dummy', 0)
 
     def start(self):
         self._log.debug('')
@@ -126,15 +125,15 @@ class Nfc2BleTag:
         self._log.debug('id=%s', id)
         return True
 
-    def publish(self, tagid, interval=PUBLISH_INTERVAL):
-        self._log.debug('tagid=%s, interval=%s', tagid, interval)
+    def publish(self, tagid, sec=PUBLISH_SEC):
+        self._log.debug('tagid=%s, sec=%s', tagid, sec)
 
         self._blepub = BleTagPublisher(tagid, debug=False)
         self._blepub.start()
         self._log.info('start:tagid=%s', tagid)
 
         self._pub_active = True
-        n = int(self.PUBLISH_SEC / self.PUBLISH_INTERVAL)
+        n = int(sec / self.PUBLISH_INTERVAL)
         for i in range(n):
             self._log.debug('i=%d/%d', i, n - 1)
 
@@ -142,7 +141,7 @@ class Nfc2BleTag:
                 self._log.debug('_pub_active=%s', self._pub_active)
                 break
 
-            time.sleep(interval)
+            time.sleep(self.PUBLISH_INTERVAL)
 
         self._blepub.end()
         self._log.info('done:tagid=%s', tagid)

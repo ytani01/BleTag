@@ -77,17 +77,17 @@ ts_echo "VIRTUAL_ENV=${VIRTUAL_ENV}"
 #
 # check running
 #
-PID=`ps axw | grep -v grep | grep python3 | grep ${CMD} | sed 's/^ *//' | cut -d ' ' -f 1`
+PID=`ps axw | grep -v grep | grep python3 | grep ${CMD} | sed 's/^ *//' | cut -d ' ' -f 1 | sed 's/\n/ /g'`
 ts_echo "PID=${PID}"
 
 #
 # restart $CMD
 #
-if [ ! -z ${PID} ]; then
+if [ ! -z "${PID}" ]; then
     for p in ${PID}; do
         ts_echo_do kill $p
     done
-    ts_echo_do sleep 2
+    ts_echo_do sleep 1
 fi
 
 ts_echo ${CMD}
