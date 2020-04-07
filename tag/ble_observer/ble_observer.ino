@@ -6,26 +6,28 @@
 #include <FS.h>
 #include <SPIFFS.h>
 
-#define FORMAT_ON_FAIL true
+#define MY_NAME        "ESP32 Observer"
+#define DEV_NAME       "ESP32"
 
+#define FORMAT_ON_FAIL true
 #define ON_FILE "/tag_on"
 
 #define SERIAL_SPEED   115200
+
 #define PIN_LED        2  // GPIO pin
-#define SCAN_SEC       2  // sec
+
+#define SCAN_SEC       3  // sec
+#define SCAN_COUNT_MAX 2
+int     Scan_Count = 0;
+
 #define DEEP_SLEEP_MSEC_OFF 10000  // ms
-#define DEEP_SLEEP_MSEC_ON 100     // ms
-#define MY_NAME        "ESP32 Observer"
-#define DEV_NAME       "ESP32"
+#define DEEP_SLEEP_MSEC_ON  100     // ms
 
 #define LED_MODE_OFF   0
 #define LED_MODE_ON    1
 #define LED_MODE_BLINK 2
 int     LedMode = LED_MODE_OFF;
 #define ON_MSEC        2000
-
-#define SCAN_COUNT_MAX 2
-int     Scan_Count = 0;
 
 BLEScan* pBLEScan;
 String   MyAddrStr;
